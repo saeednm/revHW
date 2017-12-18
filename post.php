@@ -6,7 +6,51 @@ $type= $_POST["type"];
 require_once 'Data.php';
 $d = new Data();
 
-if($type=="work"){
+if($type=="filter"){
+	
+	
+	$filterType= $_POST["filterType"];
+	$fromDate= $_POST["fromDate"];
+	$toDate= $_POST["toDate"];
+	
+	
+	if($filterType=="Projects"){
+		$projects= $_POST["projects"];
+		$result=$d->filterSummaryByProjects($projects,$fromDate, $toDate);
+	}else if ($filterType=="Customers"){
+		$customers= $_POST["customers"];
+		$result=$d->filterSummaryByCustomers($customers,$fromDate, $toDate);
+		
+	}else{
+		
+			$result=$d->filterSummaryByTime($fromDate, $toDate);
+		
+	}
+	echo "
+	<table border='2'> 
+					<tr>
+						<th> customer </th>
+						<th> project </th>
+						<th> date </th>
+						<th> minute(s) </th>
+					</tr>
+					";
+            if($result){    
+                while ($row = $result->fetch_assoc()) {
+					echo "<tr>";
+                    echo "<td> " . $row["customer"] . "</td>";
+					echo "<td> " . $row["project"] . "</td>";
+					echo "<td> " . $row["date"] . "</td>";
+					echo "<td> " . $row["minute"] . "</td>";
+					echo "</tr>";
+                }
+			}  
+			echo " </table>";
+	
+	
+	
+	#$result = $d->saveWork($user,$project,$hour,$minute,$date);
+} else if($type=="work"){
 	$user= 1; 
 	$project= $_POST["project"];
 	$hour= $_POST["hour"];
