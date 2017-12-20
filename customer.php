@@ -1,5 +1,6 @@
 <?php
-    require_once 'Data.php';
+    $loginUser="Saeed";
+	require_once 'Data.php';
     $d = new Data();
     $result = $d->getCustomers();   
 ?>
@@ -10,7 +11,7 @@
     <meta charset="UTF-8">
     <title>Reviso HW</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./stylesheets/main.min.css">
     <link rel="stylesheet" href="./stylesheets/products.min.css">
     <script type="text/javascript" src="script.js"></script>
@@ -43,38 +44,29 @@
 <?php include('menu.html'); ?>
 <div class="container">
     <div class="row">
-        <div class="col-md-4">
-            
+		<?php echo "<h5> Hi ".$loginUser."! </h5>"; ?>
+        <div class="col-md-4">            
             <div class="side-bar">
-
-                <h4>Customers</h4>
-				
+                <h4>Customer</h4>				
 				<form>
-				<input hidden name="type" value="customer"> </input>
-				
+				<input hidden name="type" value="customer"></input>			
 				<br>
-				<label>Customer name</label>
-				<input name="customer"> </input>
-				
-				
+				<input name="customer" placeholder="Customer name"></input>			
 				<br>
-				<label>Customer description</label>
 				<br>
-				<textarea name="description" type="text" cols="30" rows="3" > </textarea>
+				<textarea name="description" type="text" cols="25" rows="4" placeholder="Customer description"></textarea>
 				<br>
-				
+				<br>
 				<input name="submit" type="submit" value="Submit"></input>
 				</form>
-               
 				
             </div>
         </div>
-        
     </div>
 </div>
 <!-- scripts added last for faster loading -->
-<script src="./bower_components/jquery/dist/jquery.min.js"></script>
-<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 
 </body>
