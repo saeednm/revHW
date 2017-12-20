@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 $type= $_POST["type"];
 require_once 'Data.php';
 $d = new Data();
-
+$userID=1; 
 if($type=="filter"){
 	
 	
@@ -51,22 +51,22 @@ if($type=="filter"){
 	
 	#$result = $d->saveWork($user,$project,$hour,$minute,$date);
 } else if($type=="work"){
-	$user= 1; 
+	
 	$project= $_POST["project"];
 	$hour= $_POST["hour"];
 	$minute= $_POST["minute"];
 	$date= $_POST["date"];
-	$result = $d->saveWork($user,$project,$hour,$minute,$date);
+	$result = $d->saveWork($userID,$project,$hour,$minute,$date);
 } else if ($type=="project"){
 	$project= $_POST["project"];
 	$description= $_POST["description"];
 	$customer= $_POST["customer"];
 	$fee= $_POST["fee"];
-	$result = $d->saveProject($project,$description,$customer,$fee);
+	$result = $d->saveProject($project,$description,$customer,$fee,$userID);
 } else if ($type=="customer"){
 	$customer= $_POST["customer"];
 	$description= $_POST["description"];
 	
-	$result = $d->saveCustomer($customer,$description);
+	$result = $d->saveCustomer($customer,$description,$userID);
 }
 ?>

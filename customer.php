@@ -2,7 +2,8 @@
     $loginUser="Saeed";
 	require_once 'Data.php';
     $d = new Data();
-    $result = $d->getCustomers();   
+	$userID=1;
+    $result = $d->getCustomers($userID);   
 ?>
 <!DOCTYPE html>
 <html lang="en">

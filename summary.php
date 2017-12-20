@@ -1,10 +1,11 @@
 <?php
     $loginUser="Saeed";
+	$userID=1;
     require_once 'Data.php';
     $d = new Data();
-    $summary = $d->getTotal();
-    $projects = $d->getProjects();
-    $customers = $d->getCustomers();
+    $summary = $d->getTotal($userID);
+    $projects = $d->getProjects($userID);
+    $customers = $d->getCustomers($userID);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,21 +92,17 @@ th, td {
 				<div id="Projects" class="tabcontent">
   
                 <?php
-                  #  $cgr = $_GET["category"];
                 while ($row = $projects->fetch_assoc()) {
-				#	echo $row["p_id"];
                     echo "<input type='checkbox' name='project' value='" . $row["p_id"] . "'><label>" . $row["p_name"] ." for ". $row["c_name"]. "</label><br>";
                 }
                 ?>
-                
 				</div>
 				<input hidden id="projects" name="projects" value=""> </input>
 				<div id="Customers" class="tabcontent">
 				
                 <?php
-                  #  $cgr = $_GET["category"];
+
                 while ($row = $customers->fetch_assoc()) {
-				#	echo $row["p_id"];
                     echo "<input type='checkbox' name='customer' value='" . $row["c_id"] . "'><label>" . $row["c_name"] . "</label><br>";
                 }
                 ?>
@@ -158,8 +155,7 @@ function openTab(evt, Name) {
 						<th> project </th>
 						<th> date </th>
 						<th> minute(s) </th>
-						<th> fee(€) </th>
-						<th> wage(€) </th>
+						
 					</tr>
                 <?php
                   
@@ -169,8 +165,8 @@ function openTab(evt, Name) {
 					echo "<td> " . $row["project"] . "</td>";
 					echo "<td> " . $row["date"] . "</td>";
 					echo "<td> " . $row["minute"] . "</td>";
-					echo "<td> " . $row["fee"] . "</td>";
-					echo "<td> " . number_format($row["wage"], 2, '.', ',') . "</td>";
+					#echo "<td> " . $row["fee"] . "</td>";
+					#echo "<td> " . number_format($row["wage"], 2, '.', ',') . "</td>";
 					echo "</tr>";
                 }
                 ?>
@@ -182,9 +178,9 @@ function openTab(evt, Name) {
     </div>
 </div>
 <!-- scripts added last for faster loading -->
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>
-<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script>
+	<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script>
       $(function () {
 
         $('form').on('submit', function (e) {

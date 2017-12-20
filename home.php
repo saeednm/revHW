@@ -2,7 +2,8 @@
     $loginUser="Saeed";
 	require_once 'Data.php';
     $d = new Data();
-    $result = $d->getProjects();  
+	$userID=1;
+    $result = $d->getProjects($userID);  
 ?>
 <!DOCTYPE html>
 <html lang="en">
