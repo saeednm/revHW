@@ -61,7 +61,8 @@ if($type=="filter"){
 	$project= $_POST["project"];
 	$description= $_POST["description"];
 	$customer= $_POST["customer"];
-	$result = $d->saveProject($project,$description,$customer);
+	$fee= $_POST["fee"];
+	$result = $d->saveProject($project,$description,$customer,$fee);
 } else if ($type=="customer"){
 	$customer= $_POST["customer"];
 	$description= $_POST["description"];
