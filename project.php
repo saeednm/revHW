@@ -1,7 +1,9 @@
 <?php
-    require_once 'Data.php';
+    $loginUser="Saeed";
+	require_once 'Data.php';
     $d = new Data();
-    $result = $d->getCustomers();   
+    $result = $d->getCustomers();  
+	
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,7 +12,7 @@
     <meta charset="UTF-8">
     <title>Reviso HW</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./stylesheets/main.min.css">
     <link rel="stylesheet" href="./stylesheets/products.min.css">
     <script type="text/javascript" src="script.js"></script>
@@ -43,29 +45,28 @@
 <?php include('menu.html'); ?>
 <div class="container">
     <div class="row">
-        <div class="col-md-4">
+		<?php echo "<h5> Hi ".$loginUser."! </h5>"; ?>
+        <div class="col-md-5">
             
             <div class="side-bar">
 
-                <h4>Projects</h4>
+                <h4>Project </h4>
 				
 				<form>
 				<input hidden name="type" value="project"> </input>
+				<br>
+				<input name="project" placeholder="Project name"></input>		
+				<br>
+				<br>
+				<textarea name="description"  type="text" cols="25" rows="4"  placeholder="project description"></textarea>
 				
 				<br>
-				<label>project name</label>
-				<input name="project"> </input>
+				<label>Customer:</label>
 				
+				<br>	
+				<select name="customer" style="height:30px">
 				
-				<br>
-				<label>project description</label>
-				<br>
-				<textarea name="description" type="text" cols="30" rows="3" > </textarea>
-				<br>
-				<label>customer</label>
-				<select name="customer">
-  
-
+				<option value="" selected disabled hidden>Choose customer</option>
                 <?php
                    
                 while ($row = $result->fetch_assoc()) {
@@ -73,7 +74,12 @@
                 }
                 ?>
 				</select> 
-				<a href="customer.php"> add customer</a>
+				<a href="customer.php">add</a>
+				<br>
+				<label>fee(€) per hour</label>
+				<br>
+				<input name="fee" placeholder="0.00"></input>
+				<br>
 				<br>
 				<input name="submit" type="submit" value="Submit"></input>
 				</form>
@@ -85,8 +91,8 @@
     </div>
 </div>
 <!-- scripts added last for faster loading -->
-<script src="./bower_components/jquery/dist/jquery.min.js"></script>
-<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 
 </body>
