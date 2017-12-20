@@ -1,5 +1,6 @@
 <?php   
-    require_once 'Data.php';
+    $loginUser="Saeed";
+	require_once 'Data.php';
     $d = new Data();
     $result = $d->getProjects();  
 ?>
@@ -10,7 +11,7 @@
     <meta charset="UTF-8">
     <title>Reviso HW</title>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./stylesheets/main.min.css">
     <link rel="stylesheet" href="./stylesheets/products.min.css">
     <script type="text/javascript" src="script.js"></script>
@@ -40,29 +41,33 @@
   </head>
 </head>
 <body>
+
 <?php include('menu.html'); ?>
 <div class="container">
     <div class="row">
+		<?php echo "<h5> Hi ".$loginUser."! </h5>"; ?>
         <div class="col-md-4">
             <div class="side-bar">
 
-                <h4>Projects</h4>
+                <h4>Workload </h4>
 				
 				<form>
 				
 				<input hidden name="type" value="work"> </input>
-				
-				<label style="width:60px">project</label>
-				<select name="project" style="width:150px">
+				<br>
+				<label style="width:72px">project</label>
+				<br>
+				<select name="project" style=" height:30px">
   
 
                 <?php
                    
                 while ($row = $result->fetch_assoc()) {
-                    echo "<option value='" . $row["p_id"] . "' >". $row["p_name"] . "</option>";
+                    echo "<option value='" . $row["p_id"] . "' >". $row["p_name"] . " for ". $row["c_name"] . "</option>";
                 }
                 ?>
 				</select>
+				<br>
 				<br>
 				<label style="width:60px">hours</label>
 				
@@ -74,19 +79,17 @@
 				<label style="width:60px">date</label>
 				<input id="date" name="date" type="date" value="date" style="width:150px"> </input>
 				<br>
+				<br>
 				<input name="submit" type="submit" value="Submit"> </input>
-				</form>
-                <hr>
-                
-				
+				</form>	
             </div>
         </div>
         
     </div>
 </div>
 <!-- scripts added last for faster loading -->
-<script src="./bower_components/jquery/dist/jquery.min.js"></script>
-<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 
 </body>
