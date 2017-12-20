@@ -1,4 +1,4 @@
 # revHW
-Homework Project.
+Homework Project.\n
 
 Tests are implemented using SimpleTest unit testing for PHP (http://www.simpletest.org/)
