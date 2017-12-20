@@ -16,20 +16,27 @@ class Data
         }
     }
     function getProjects(){
-        $ct = "select `project`.`p_id` AS `p_id`,`project`.`p_name` AS `p_name`,`customer`.`c_name` AS `c_name` 
-		  from `project` join `customer` on(`project`.`customer_id` = `customer`.`c_id`)";
-       
-        $result = $this->conn->query($ct);
+        $qry = "select * from `project` left join `customer` on(`project`.`customer_id` = `customer`.`c_id`)"; 
+        $result = $this->conn->query($qry);
         #$this->conn->close();
+        return $result;
+    }
+	function deleteProjects(){
+        $qry = "DELETE FROM `project`";       
+        $result = $this->conn->query($qry);		
         return $result;
     }
 	function getCustomers(){
-        $ct = "select * from customer";
-       
-        $result = $this->conn->query($ct);
-        #$this->conn->close();
+        $qry = "select * from customer";      
+        $result = $this->conn->query($qry);
         return $result;
     }
+	function deleteCustomers(){
+        $qry = "DELETE FROM customer";       
+        $result = $this->conn->query($qry);
+        return $result;
+    }
+	
     function getSummary()
     {
         $qry = "select * from summary";
@@ -40,11 +47,8 @@ class Data
 		join `user` on((`workload`.`user_id` = `user`.`u_id`))) 
 		join `project` on((`workload`.`project_id` = `project`.`p_id`))) 
 		group by `username`,`project` order by `username`,`project` ;";
-
-        
-        $res = $this->conn->query($qry);
        
-        #$this->conn->close();
+        $res = $this->conn->query($qry);
         return $res;
     }
 	function filterSummaryByTime($timeFrom, $timeTo)
@@ -86,10 +90,6 @@ class Data
 		
 		$stmt->execute();
 		$result = $stmt->get_result();
-		
-		
-		
-		
 		$stmt->close();
 		return $result;
 	}
@@ -131,11 +131,7 @@ class Data
 		}
 		
 		$stmt->execute();
-		$result = $stmt->get_result();
-		
-		
-		
-		
+		$result = $stmt->get_result();	
 		$stmt->close();
 		return $result;
 	}
@@ -164,7 +160,7 @@ class Data
 		}
 		
 		$qry .="order by `user`.`u_name`,`projectforcustomer`.`c_name`,`projectforcustomer`.`p_name` " ;
-		#echo $qry;
+		
 		$stmt=$this->conn->prepare($qry);
 		
 		if(strlen($timeFrom) > 1){
@@ -179,9 +175,6 @@ class Data
 		
 		$stmt->execute();
 		$result = $stmt->get_result();
-		
-		
-		
 		$stmt->close();
 		return $result;
 		
@@ -191,63 +184,46 @@ class Data
 	{
 		$qry= 
 		"select `user`.`u_name` AS `username`,`projectforcustomer`.`c_name` AS `customer`,
+		projectforcustomer.fee * workload.minute /60.0  AS wage,fee,
 		`projectforcustomer`.`p_name` AS `project`,`workload`.`minute` AS `minute` ,`workload`.`date` AS `date` 
 		from (
 		(`workload` join `user` on((`workload`.`user_id` = `user`.`u_id`)))
 		join (
-		  select `project`.`p_id` AS `p_id`,`project`.`p_name` AS `p_name`,`customer`.`c_name` AS `c_name` 
+		  select `project`.`p_id` AS `p_id`,`project`.`p_name` AS `p_name`,`project`.`fee`,`customer`.`c_name` AS `c_name` 
 		  from (`project` join `customer` on((`project`.`customer_id` = `customer`.`c_id`)))
 		  )as `projectforcustomer` on((`workload`.`project_id` = `projectforcustomer`.`p_id`))
 		) 
 		order by `user`.`u_name`,`projectforcustomer`.`c_name`,`projectforcustomer`.`p_name` " ;
 		
 		$res = $this->conn->query($qry);
-       
-        #$this->conn->close();
-        return $res;
-		
+        return $res;		
 	}
 	function saveWork($user,$project,$hour,$minute,$date)
     {
 		$stmt=$this->conn->prepare( "INSERT INTO workload(project_id, user_id, minute,date) VALUES ( ? , ? , ? , ? )");
 		$totalMin=(intval($hour)*60+intval($minute));
-		echo $totalMin;
-		echo $user;
-		echo $project;
-		echo $date;
-		
 		$stmt->bind_param( "iiis", $project,$user,$totalMin, $date );
-		
 		$res=$stmt->execute();
 		$stmt->close();
-		
-		#. $project ."," . $user . "," .  (intval($hour)*60+intval($minute)) .",'".$date. "');" ;
-		#echo $stmt;
-		#$res = $this->conn->query($qry);
-		#if (!$res) throw new Exception("Database error");
-		#$this->conn->close();
-        #return $res;
+        return $res;
 	}
-	function saveProject($project,$description,$customer_id)
+	function saveProject($project, $description, $customer_id, $fee)
     {
-		
-		$qry= "INSERT INTO `project`(`p_name`, `p_description`,`customer_id`) VALUES ('" 
-		. $project ."','" . $description ."',".$customer_id. ");" ;
-		echo $qry;
-		$res = $this->conn->query($qry);
-		if (!$res) throw new Exception("Database error");
-		$this->conn->close();
+		$stmt=$this->conn->prepare("INSERT INTO `project`(`p_name`, `p_description`,`customer_id`,`fee`) 
+		VALUES ( ? , ? , ? , ? )");
+		$stmt->bind_param( "ssid", $project,$description,$customer_id, $fee );
+		$res=$stmt->execute();	
+		$res =$stmt->get_result();
+		$stmt->close();
         return $res;
 	}
 	function saveCustomer($customer,$description)
-    {
-		
-		$qry= "INSERT INTO `customer`(`c_name`, `c_description`) VALUES ('" 
-		. $customer ."','" . $description ."');" ;
-		echo $qry;
-		$res = $this->conn->query($qry);
-		if (!$res) throw new Exception("Database error");
-		$this->conn->close();
+    {	
+		$stmt=$this->conn->prepare("INSERT INTO `customer`(`c_name`, `c_description`) VALUES ( ? , ? )") ;
+		$stmt->bind_param( "ss", $customer,$description);
+		$res=$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
         return $res;
 	}
 }
