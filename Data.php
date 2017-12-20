@@ -2,59 +2,77 @@
 
 class Data
 {
-    var $servername = "localhost";
-    var $username = "root";
-    var $password = "";
-    var $dbname = "reviso";
-    // Create connection
-    var $conn ;
+    private  $serverAddr = "localhost";
+    private  $username = "root";
+    private  $password = "";
+    private  $dbName = "reviso";
+    private  $conn ;
+	
     public function __construct()
     {
-        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        $this->conn = new mysqli($this->serverAddr, $this->username, $this->password, $this->dbName);
         if ($this->conn->connect_error) {
             die("Connection failed: " . $this->conn->connect_error);
         }
     }
-    function getProjects(){
-        $qry = "select * from `project` left join `customer` on(`project`.`customer_id` = `customer`.`c_id`)"; 
-        $result = $this->conn->query($qry);
-        #$this->conn->close();
-        return $result;
-    }
-	function deleteProjects(){
-        $qry = "DELETE FROM `project`";       
-        $result = $this->conn->query($qry);		
-        return $result;
-    }
-	function getCustomers(){
-        $qry = "select * from customer";      
-        $result = $this->conn->query($qry);
-        return $result;
-    }
-	function deleteCustomers(){
-        $qry = "DELETE FROM customer";       
-        $result = $this->conn->query($qry);
-        return $result;
-    }
-	
-    function getSummary()
-    {
-        $qry = "select * from summary";
-		$q="
-		select `user`.`u_name` AS `username`,`project`.`p_name` AS `project`,
-		(sum(`workload`.`minute`) % 60) AS `minute`,(sum(`workload`.`minute`) DIV 60) AS `hour` 
-		from ((`workload` 
-		join `user` on((`workload`.`user_id` = `user`.`u_id`))) 
-		join `project` on((`workload`.`project_id` = `project`.`p_id`))) 
-		group by `username`,`project` order by `username`,`project` ;";
-       
-        $res = $this->conn->query($qry);
+    function getProjects($user_id){
+        $qry = "select * from `project` left join `customer` on(`project`.`customer_id` = `customer`.`c_id`) 
+		        where project.user_id = ? and customer.user_id = ? " ; 
+		$stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "ii", $user_id,$user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
         return $res;
     }
+	function deleteProjects($user_id){
+        $qry = "DELETE FROM `project` where project.user_id = ?  ";    
+        $stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+    }
+	function getCustomers($user_id){
+        $qry = "select * from customer where customer.user_id = ?  ";      
+        $stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+    }
+	function deleteCustomers($user_id){
+        $qry = "DELETE FROM customer where customer.user_id = ?  ";     
+        $stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+    }
+	
+    function getSummary($user_id)
+    {
+		$qry="
+		select `project`.`p_name`,
+		sum(`workload`.`minute`) AS `minute`
+		from (`workload` join `project` on((`workload`.`project_id` = `project`.`p_id`))) 
+		WHERE workload.user_id = ? 
+		group by `project_id` order by `project_id` " ;     
+        $stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+    }
+	
 	function filterSummaryByTime($timeFrom, $timeTo)
 	{
 		$qry= 
-		"select `user`.`u_name` AS `username`,`projectforcustomer`.`c_name` AS `customer`,
+		"select `projectforcustomer`.`c_name` AS `customer`,
 		`projectforcustomer`.`p_name` AS `project`,`workload`.`minute` AS `minute` ,`workload`.`date` AS `date` 
 		from (
 		(`workload` join `user` on((`workload`.`user_id` = `user`.`u_id`)))
@@ -72,8 +90,7 @@ class Data
 		}else if (strlen($timeTo) > 1){
 				$qry .=" where date<= ? ";
 		}
-		
-		
+				
 		$qry .="order by `user`.`u_name`,`projectforcustomer`.`c_name`,`projectforcustomer`.`p_name` " ;
 		#echo $qry;
 		$stmt=$this->conn->prepare($qry);
@@ -99,7 +116,7 @@ class Data
 			return;
 		}
 		$qry= 
-		"select `user`.`u_name` AS `username`,`projectforcustomer`.`c_name` AS `customer`,
+		"select `projectforcustomer`.`c_name` AS `customer`,
 		`projectforcustomer`.`p_name` AS `project`,`workload`.`minute` AS `minute` ,`workload`.`date` AS `date` 
 		from (
 		(`workload` join `user` on((`workload`.`user_id` = `user`.`u_id`)))
@@ -142,7 +159,7 @@ class Data
 			return;
 		}
 		$qry= 
-		"select `user`.`u_name` AS `username`,`projectforcustomer`.`c_name` AS `customer`,
+		"select `projectforcustomer`.`c_name` AS `customer`,
 		`projectforcustomer`.`p_name` AS `project`,`workload`.`minute` AS `minute` ,`workload`.`date` AS `date` 
 		from (
 		(`workload` join `user` on((`workload`.`user_id` = `user`.`u_id`)))
@@ -180,48 +197,81 @@ class Data
 		
 	}
 
-	function getTotal()
+	function getTotal($user_id)
 	{
 		$qry= 
-		"select `user`.`u_name` AS `username`,`projectforcustomer`.`c_name` AS `customer`,
+		"select `projectforcustomer`.`c_name` AS `customer`,
 		projectforcustomer.fee * workload.minute /60.0  AS wage,fee,
 		`projectforcustomer`.`p_name` AS `project`,`workload`.`minute` AS `minute` ,`workload`.`date` AS `date` 
-		from (
-		(`workload` join `user` on((`workload`.`user_id` = `user`.`u_id`)))
-		join (
+		from ( `workload` join (
 		  select `project`.`p_id` AS `p_id`,`project`.`p_name` AS `p_name`,`project`.`fee`,`customer`.`c_name` AS `c_name` 
 		  from (`project` join `customer` on((`project`.`customer_id` = `customer`.`c_id`)))
+		  WHERE project.user_id= ? and customer.user_id= ?
 		  )as `projectforcustomer` on((`workload`.`project_id` = `projectforcustomer`.`p_id`))
-		) 
-		order by `user`.`u_name`,`projectforcustomer`.`c_name`,`projectforcustomer`.`p_name` " ;
+		)
+		WHERE workload.user_id= ?
+		order by `projectforcustomer`.`c_name`,`projectforcustomer`.`p_name` " ;
 		
-		$res = $this->conn->query($qry);
-        return $res;		
+		$stmt=$this->conn->prepare($qry);
+		$stmt->bind_param( "iii", $user_id,$user_id,$user_id );
+		$stmt->execute();	
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+			
 	}
 	function saveWork($user,$project,$hour,$minute,$date)
     {
-		$stmt=$this->conn->prepare( "INSERT INTO workload(project_id, user_id, minute,date) VALUES ( ? , ? , ? , ? )");
+		$qry="INSERT INTO workload( user_id, project_id, minute,date) VALUES ( ? , ? , ? , ? )";
+		$stmt=$this->conn->prepare($qry);
 		$totalMin=(intval($hour)*60+intval($minute));
-		$stmt->bind_param( "iiis", $project,$user,$totalMin, $date );
-		$res=$stmt->execute();
-		$stmt->close();
-        return $res;
-	}
-	function saveProject($project, $description, $customer_id, $fee)
-    {
-		$stmt=$this->conn->prepare("INSERT INTO `project`(`p_name`, `p_description`,`customer_id`,`fee`) 
-		VALUES ( ? , ? , ? , ? )");
-		$stmt->bind_param( "ssid", $project,$description,$customer_id, $fee );
-		$res=$stmt->execute();	
+		$stmt->bind_param( "iiis", $user,$project,$totalMin, $date );
+		$stmt->execute();	
 		$res =$stmt->get_result();
 		$stmt->close();
         return $res;
 	}
-	function saveCustomer($customer,$description)
+	function deleteWorks($user_id){
+		$stmt=$this->conn->prepare( "DELETE FROM workload WHERE user_id= ? ");
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();	
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+	}
+	function saveProject($project, $description, $customer_id, $fee, $user_id)
+    {
+		$stmt=$this->conn->prepare("INSERT INTO `project`(`p_name`, `p_description`,`customer_id`,`fee`,user_id) 
+		VALUES ( ? , ? , ? , ? , ? )");
+		$stmt->bind_param( "ssidi", $project,$description,$customer_id, $fee ,$user_id);
+		$stmt->execute();	
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+	}
+	function saveCustomer($customer,$description,$user_id)
     {	
-		$stmt=$this->conn->prepare("INSERT INTO `customer`(`c_name`, `c_description`) VALUES ( ? , ? )") ;
-		$stmt->bind_param( "ss", $customer,$description);
-		$res=$stmt->execute();
+		$stmt=$this->conn->prepare("INSERT INTO `customer`(`c_name`, `c_description`,`user_id`) VALUES ( ? , ? , ?)") ;
+		$stmt->bind_param( "ssi", $customer,$description,$user_id);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+	}
+	function addUser($user_id, $username)
+    {	
+		$stmt=$this->conn->prepare("INSERT INTO `user`(`u_id`, `u_name`) VALUES ( ? , ? )") ;
+		$stmt->bind_param( "is", $user_id,$username);
+		$stmt->execute();
+		$res =$stmt->get_result();
+		$stmt->close();
+        return $res;
+	}
+	function getUser($user_id)
+    {	
+		$stmt=$this->conn->prepare("SELECT * from`user` WHERE `u_id`= ? ") ;
+		$stmt->bind_param( "i", $user_id);
+		$stmt->execute();
 		$res =$stmt->get_result();
 		$stmt->close();
         return $res;
