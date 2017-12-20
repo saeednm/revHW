@@ -158,6 +158,8 @@ function openTab(evt, Name) {
 						<th> project </th>
 						<th> date </th>
 						<th> minute(s) </th>
+						<th> fee(€) </th>
+						<th> wage(€) </th>
 					</tr>
                 <?php
                   
@@ -167,6 +169,8 @@ function openTab(evt, Name) {
 					echo "<td> " . $row["project"] . "</td>";
 					echo "<td> " . $row["date"] . "</td>";
 					echo "<td> " . $row["minute"] . "</td>";
+					echo "<td> " . $row["fee"] . "</td>";
+					echo "<td> " . number_format($row["wage"], 2, '.', ',') . "</td>";
 					echo "</tr>";
                 }
                 ?>
