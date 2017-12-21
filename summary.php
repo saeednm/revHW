@@ -17,61 +17,12 @@
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./stylesheets/main.min.css">
     <link rel="stylesheet" href="./stylesheets/products.min.css">
+	<link rel="stylesheet" href="./stylesheets/summary.css">
     <script type="text/javascript" src="script.js"></script>
 </head>
 
 <body>
 <?php include('menu.html'); ?>
-
-<style>
-body {font-family: Arial;}
-
-/* Style the tab */
-.tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
-    font-size: 17px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-    background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-    background-color: #ccc;
-}
-
-/* Style the tab content */
-.tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-}
-	
-	table, th, td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-th, td {
-    padding: 15px;
-}
-
-</style>
 
 <div class="container">
     <div class="row">
@@ -86,9 +37,7 @@ th, td {
 					<button class="tablinks" onclick="openTab(event, 'Customers')">Customer</button>
 					<button class="tablinks" onclick="openTab(event, 'None')">X</button>
 				</div>
-				<form>
-				<input hidden name="type" value="filter"> </input>
-				<input hidden id="filterType" name="filterType" value="none"> </input>
+				
 				<div id="Projects" class="tabcontent">
   
                 <?php
@@ -97,7 +46,7 @@ th, td {
                 }
                 ?>
 				</div>
-				<input hidden id="projects" name="projects" value=""> </input>
+				
 				<div id="Customers" class="tabcontent">
 				
                 <?php
@@ -108,7 +57,6 @@ th, td {
                 ?>
                 
 				</div>
-				<input hidden id="customers" name="customers" value=""> </input>
 				<div id="None" class="tabcontent">
 				</div>
 
@@ -130,7 +78,11 @@ function openTab(evt, Name) {
 </script>
 				
 				
-               
+               <form>
+				<input hidden name="type" value="filter"> </input>
+				<input hidden id="filterType" name="filterType" value="none"> </input>
+				<input hidden id="projects" name="projects" value=""> </input>
+				<input hidden id="customers" name="customers" value=""> </input>
 				<hr>
                 <h4>Time period</h4>
 					<label style="width:100px">from</label>

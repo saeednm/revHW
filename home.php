@@ -58,7 +58,7 @@
 				<br>
 				<label style="width:72px">project</label>
 				<br>
-				<select name="project" style=" height:30px">
+				<select name="project" style="height:30px; width:230px; position:relative; ">
   
 
                 <?php

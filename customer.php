@@ -1,9 +1,9 @@
 <?php
-    $loginUser="Saeed";
+	$loginUser="Saeed";
 	require_once 'Data.php';
-    $d = new Data();
+	$d = new Data();
 	$userID=1;
-    $result = $d->getCustomers($userID);   
+	$result = $d->getCustomers($userID);   
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="./stylesheets/main.min.css">
     <link rel="stylesheet" href="./stylesheets/products.min.css">
     <script type="text/javascript" src="script.js"></script>
-	 <head>
+	<head>
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script>
       $(function () {
@@ -55,7 +55,7 @@
 				<input name="customer" placeholder="Customer name"></input>			
 				<br>
 				<br>
-				<textarea name="description" type="text" cols="25" rows="4" placeholder="Customer description"></textarea>
+				<textarea name="description" type="text" cols="25" rows="4" placeholder="Customer description" style=" width:200px; position:relative; left:10px"></textarea>
 				<br>
 				<br>
 				<input name="submit" type="submit" value="Submit"></input>

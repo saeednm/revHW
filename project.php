@@ -47,7 +47,7 @@
 <div class="container">
     <div class="row">
 		<?php echo "<h5> Hi ".$loginUser."! </h5>"; ?>
-        <div class="col-md-5">
+        <div class="col-md-4">
             
             <div class="side-bar">
 
@@ -59,13 +59,13 @@
 				<input name="project" placeholder="Project name"></input>		
 				<br>
 				<br>
-				<textarea name="description"  type="text" cols="25" rows="4"  placeholder="project description"></textarea>
+				<textarea name="description"  type="text" cols="25" rows="4"  placeholder="project description" style=" width:200px; position:relative; left:10px"></textarea>
 				
 				<br>
 				<label>Customer:</label>
 				
 				<br>	
-				<select name="customer" style="height:30px">
+				<select name="customer" style="height:30px; width:200px; position:relative; left:10px">
 				
 				<option value="" selected disabled hidden>Choose customer</option>
                 <?php
@@ -75,9 +75,9 @@
                 }
                 ?>
 				</select> 
-				<a href="customer.php">add</a>
+				<a href="customer.php" style="position:relative; left:10px">add</a>
 				<br>
-				<label>fee(€) per hour</label>
+				<label>fee per hour(€)</label>
 				<br>
 				<input name="fee" placeholder="0.00"></input>
 				<br>
